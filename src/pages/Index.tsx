@@ -8,6 +8,7 @@ import Icon from '@/components/ui/icon';
 const Index = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [activeSkill, setActiveSkill] = useState<number | null>(null);
+  const [codeLines, setCodeLines] = useState<Array<{ text: string; opacity: number }>>([]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -15,6 +16,40 @@ const Index = () => {
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  useEffect(() => {
+    const codeSnippets = [
+      'const createWebsite = () => {',
+      '  return innovation();',
+      '};',
+      'function buildCMS() {',
+      '  deploy("WordPress");',
+      '}',
+      'class Developer {',
+      '  solve(problems);',
+      '}',
+      'npm install creativity',
+      'git commit -m "magic"',
+      '<?php echo $success; ?>',
+    ];
+
+    const interval = setInterval(() => {
+      setCodeLines(prev => {
+        const newLines = [...prev];
+        if (newLines.length > 15) newLines.shift();
+        newLines.push({
+          text: codeSnippets[Math.floor(Math.random() * codeSnippets.length)],
+          opacity: 1
+        });
+        return newLines.map((line, i) => ({
+          ...line,
+          opacity: (i + 1) / newLines.length
+        }));
+      });
+    }, 1500);
+
+    return () => clearInterval(interval);
   }, []);
 
   const skills = [
@@ -56,16 +91,30 @@ const Index = () => {
         }}
       />
 
-      <section className="relative min-h-screen flex items-center justify-center px-4">
-        <div className="container mx-auto text-center">
-          <div className="animate-fade-in-up">
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+      <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden opacity-20">
+          <div className="absolute left-0 top-1/4 space-y-2">
+            {codeLines.map((line, i) => (
+              <div
+                key={i}
+                className="text-primary font-mono text-sm animate-slide-in-right"
+                style={{ opacity: line.opacity * 0.6 }}
+              >
+                {line.text}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
+          <div className="animate-fade-in-up text-center md:text-left order-2 md:order-1">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
               Web Developer
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8">
+            <p className="text-lg md:text-xl text-muted-foreground mb-8">
               Создаю современные решения на популярных CMS
             </p>
-            <div className="flex gap-4 justify-center flex-wrap">
+            <div className="flex gap-4 justify-center md:justify-start flex-wrap">
               <Button size="lg" className="group relative overflow-hidden">
                 <span className="relative z-10">Мои проекты</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -75,6 +124,16 @@ const Index = () => {
               </Button>
             </div>
           </div>
+
+          <div className="relative order-1 md:order-2 animate-scale-in">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/30 to-secondary/30 blur-3xl animate-glow" />
+            <img
+              src="https://cdn.poehali.dev/projects/cca43838-06b6-401a-9066-0ca635f82ef2/files/20604eeb-03f4-4056-af8c-2ccadf0c6498.jpg"
+              alt="Cyber Developer"
+              className="relative z-10 w-full max-w-md mx-auto animate-float drop-shadow-2xl"
+            />
+          </div>
+        </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-20">
             {skills.map((skill, index) => (
